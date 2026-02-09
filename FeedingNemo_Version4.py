@@ -163,7 +163,7 @@ def game_menu():
     elif choice == "6":
         os.system('cls' if os.name == 'nt' else 'clear')
         # start()
-        print("Bye, see you again!")
+        print("Bye, see you again!!!!")
         exit()
     
 
