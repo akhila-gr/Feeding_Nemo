@@ -133,6 +133,7 @@ def user_management_system():
         # check for invalid input
         while not (choice.isdigit() and int(choice) > 0 and int(choice) < len(profiles) + 2):
             choice = input("Invalid choice. Choose a valid NUMBER: ")
+        
 
         # if creating new user
         if choice == "1":
@@ -169,7 +170,7 @@ def game_menu(do_clear_screen=False):
         os.system('cls')
     print("═" * width)  # clean divider
     print("><> ><> GAME MENU ><> ><>".center(width))  # main section title
-    print("Select an option to begin your adventure!".center(width))  # subtitle
+    print(f"Hi {user_name}! Choose an option to begin your adventure!".center(width))  # subtitle
     print("═" * width)
     print()
 
@@ -224,7 +225,7 @@ def choose_difficulty_menu(mode):
     # Difficulty Menu Heading
     # -------------------------------
     # Clear screen
-    # os.system('cls')
+    os.system('cls')
     print("═" * width)
     print("><> ><> SELECT DIFFICULTY ><> ><>".center(width))
     print(f"Mode: {mode}".center(width))
@@ -243,6 +244,7 @@ def choose_difficulty_menu(mode):
     choice = input("\x1B[3mChoose a level:\x1B[0m ")
     while not (choice.isdigit() and int(choice) > 0 and int(choice) <= 4):
         choice = input("Invalid choice. Choose a valid NUMBER: ")
+    print("═" * width)
 
     # Navigate based on choice
     if choice == "1":
@@ -332,15 +334,17 @@ def start_game(mode, difficulty, article):
     game_running = True
     result = ""
     unique_words = set()  # save already used words
-
     exit_game = False
     game_running = True
-    # start background thread for user input
     fish_position = "middle"
+
+    # start background thread for user input
     thread = threading.Thread(target=user_gaming_input, daemon=True)
     thread.start()
 
-    start_time = time.time()
+    if mode != "Practice":
+        start_time = time.time()
+    else: start_time = None
     # setting the seed of random to the current time to always have a different seed (time changes -> seed changes -> random changes)
     # order of words change for every game
     random.seed(start_time)
@@ -352,7 +356,14 @@ def start_game(mode, difficulty, article):
     last_word = ""
 
     # loop that takes new word
-    while lives > 0 and calculate_seconds_left(max_time, start_time) > 0 and game_running:
+
+    # Not calculating time left for practice mode
+    if mode != "Practice":
+        time_left_condition = calculate_seconds_left(max_time, start_time) > 0
+    else: 
+        time_left_condition = True # time left is always true for Practice mode!
+
+    while lives > 0 and time_left_condition and game_running:
         if exit_game:  # NEW UPDATED: break loop if Q pressed
             break
         # while lives > 0 and calculate_seconds_left(max_time, start_time) > 0:
@@ -379,14 +390,18 @@ def start_game(mode, difficulty, article):
         current_words = [correct_word, other_word1, other_word2]
         random.shuffle(current_words)
 
+        # Timer and frame handling
         max_steps = 12  # how many frames per word
         current_step = max_steps
         pause = 0.5  # how much seconds pass between two frames
         # loop for one word (printing frame multiple times)
         while current_step >= 0:
-            seconds_left = calculate_seconds_left(max_time, start_time)
-            if seconds_left < 0:
-                break
+            if mode != "Practice":
+                seconds_left = calculate_seconds_left(max_time, start_time)
+            else: seconds_left = None
+            if mode != "Practice":
+                if seconds_left < 0:
+                    break
             # Stop background task before drawing next frame (to prevent lagging)
             game_running = False
             thread.join()
@@ -460,7 +475,7 @@ def start_game(mode, difficulty, article):
     game_running = False
     thread.join()
     if exit_game:  # NEW UPDATED: Return immediately to main menu if Q pressed
-        print("\nYou pressed Q to quit. But the fish is still hungry...")
+        print("\nQuitting current game. Returning to the MAIN MENU")
         time.sleep(1)
         game_menu()
         return  # skip the rest of start_game
@@ -516,8 +531,10 @@ def user_gaming_input():
                     global exit_game
                     exit_game = True
                     game_running = False
-                    print("\nExiting game... Returning to main menu.")
-                    time.sleep(2)
+                    print("\nYou pressed Quit, but Nemo is still hungry!")
+                    print("Just keep swimming for one last bite!🪱")
+                    # print("\nExiting game... Returning to main menu.")
+                    time.sleep(4)
 
 
 def load_article_wordlist(mode, difficulty, article):
@@ -556,26 +573,34 @@ def draw_next_frame(result, current_step, max_steps, score, streak, lives, secon
     # Top divider and stats
     print("═" * width)
     if mode == "Practice":
-        print(f"🏆 Score: {score}            🔥 : {streak}".center(width))
+        print(f"🏆 Score: {score}                   🔥 : {streak}".center(width))
     else:
         print(f"🏆 : {score}           ❤️ : {lives}           ⌛ : {seconds_left}        🔥 : {streak}".center(width))
-    print(f"Article: {article}              Mode: {mode}               Difficulty: {difficulty}".center(width))
+    print(f"Article: {article}       Mode: {mode}        Difficulty: {difficulty}".center(width))
     print("═" * width)
     print()
 
     # Show result messages first (pause display)
     if result == "correct":
-        print("\n" * 2)
+        # print("\n" * 1)
+        print()
         print("  ✅ Correct! ✅".center(width))
-        print("\n" * 2)
+        # print("\n" * 1)
+        print()
+        print("═" * width)
+        print("Use ↑ / ↓ or W / S to move your fish     |     Press Q to quit".center(width))
         print("═" * width)
         return
     elif result == "incorrect":
-        print("\n" * 2)
+        # print("\n" * 1)
+        print()
         print(" ❌ Incorrect! ❌".center(width))
-        # --- UPDATED: Show correct article feedback for 2 seconds ---
-        print(f"The correct word for '{article}' is '{correct_word}'.".center(width))
-        print("\n" * 2)
+        print(f"The correct word for '{article}' is '{correct_word}'.".center(width)) # UPDATED: Show correct article feedback for 2 seconds
+        print()
+        # print("\n" * 1)
+        print()
+        print("═" * width)
+        print("Use ↑ / ↓ or W / S to move your fish     |     Press Q to quit".center(width))
         print("═" * width)
         time.sleep(2)  # pause for 2 seconds before next word
         return
@@ -594,7 +619,7 @@ def draw_next_frame(result, current_step, max_steps, score, streak, lives, secon
 
         # Spaces before the word to simulate floating toward fish
         spaces_before = max(0, current_step * spaces_per_step)
-        print(f"{fish_display}{' ' * spaces_before}← {word}")
+        print(f"{fish_display}{' ' * spaces_before} <~~~ {word}") #replaced ← with <~~~ to match worm design
 
     print()
     print("═" * width)
@@ -607,6 +632,8 @@ def draw_game_finished_screen(score, max_streak, mode, difficulty, article, new_
     print("><> " * 20)
     print("🏁 GAME OVER 🏁".center(width))
     print("><> " * 20)
+    print("═" * width)
+
     print()
     after_game_options(mode, article, difficulty, score, max_streak, new_max_streak)
 
@@ -713,7 +740,7 @@ def show_statistics():
     # Clear screen
     # os.system('cls')
     print("═" * width)
-    print(" STATISTICS ".center(width))
+    print(" ><>><> STATISTICS ><>><> ".center(width))
     print("═" * width)
     print()
 
@@ -789,7 +816,7 @@ def show_rules():
     os.system('cls')
     print("═" * width)
     print("><> ><> GAME RULES ><> ><> ".center(width))
-    print("Learn how to play and improve your German articles!".center(width))
+    print("Learn how to play the game and improve your German articles!".center(width))
     print("═" * width)
     print()
 
@@ -798,7 +825,8 @@ def show_rules():
     print("-" * width)
     print_with_width(
         "> Your goal is to guide your fish to the correct German article word ('der', 'die', 'das') as it floats across the screen.",width)
-    print_with_width("> Collect points for each correct choice and maintain a streak to increase your score!",width)
+    print_with_width("> Collect points for each correct choice and maintain a streak to track your progress!",width)
+    print_with_width("> Learn the correct article combination for the word as you play. Watch out for the correct answer when you guess them incorrectly!",width)
     print()
 
     print("-" * width)
@@ -814,23 +842,24 @@ def show_rules():
     print("🏆 Scoring:")
     print("-" * width)
     print_with_width("- Correct word: +1 point",width)
-    print_with_width("- Streaks increase your bonus score",width)
-    print_with_width("- Incorrect word: lose a life (except in Practice Mode)",width)
+    print_with_width("- Streaks: +1 for consecutive correct answers",width)
+    print_with_width("- Incorrect word: Lose a life (except in Practice Mode)",width)
     print_with_width("- Maximum streak and high score are tracked for each player",width)
     print()
 
     print("-" * width)
     print("💡 Modes:")
     print("-" * width)
-    print("- Game Challenge: Standard gameplay with lives and score")
-    print_with_width("- Practice: No lives lost, perfect for training",width)
+    print("- Game Challenge: Standard gameplay with lives, time and score")
+    print_with_width("- Practice: No lives lost, no time pressure. Perfect for training",width)
     print_with_width("- Repetition: Focuses on words you got wrong to improve retention.",width)
     print()
 
     print("-" * width)
     print("⏱ Timer:")
     print("-" * width)
-    print_with_width("Each game lasts 60 seconds. Try to catch as many correct words as possible in the time limit!",width)
+    print_with_width("Each game lasts 60 seconds (Except Practice Mode)",width) 
+    print_with_width("Try to catch as many correct words as possible in the time limit!",width)
     print()
 
     print("═" * width)
