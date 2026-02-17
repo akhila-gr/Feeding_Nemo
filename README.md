@@ -1,16 +1,12 @@
-# Instructions to run the game
+# Feeding Nemo: Der-Die-Das Edition
 
-## On Windows (with Python installed):
-1. Open Command prompt
-   
-    a. Start Menu -> Search "cmd" or "Command Prompt"
-2. If you installed Python with Anaconda, activate Anaconda's environment using this command
-~~~
-    C:\Users\gunda\miniconda3\Scripts\activate && conda activate base
-~~~
-3. Start the game by running:
+![Graphical design of the image with its name](feeding_nemo.jpeg)
 
-~~~
-cd "PyCharmMiscProject\Programming Project"
-python "FeedingNemo_Version4.py"
-~~~
+A command prompt-based game where you feed the gender marked fish the worm with the correct Noun.
+
+![Screengrab showing the gameplay](gameplay.png)
+
+## Instructions to run the game
+### On Windows:
+1. Clone or download the contents of the game on your PC. 
+2. Open the files, and run the game by opening the "FeedingNemo_game.exe" file.
