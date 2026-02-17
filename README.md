@@ -11,12 +11,6 @@ A console based German article learning game.
 2. Open the files, and run the game by opening the "FeedingNemo_game.exe" file.
 
 ## Game Rules
-## 🐠 Feeding Nemo – Der Die Das Edition
-
-Learn how to play the game and improve your German articles!
-
----
-
 ### 🐟 Objective
 
 > Your goal is to guide your fish to the correct German article word (`der`, `die`, `das`) as it floats across the screen.  
