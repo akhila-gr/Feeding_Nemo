@@ -11,9 +11,7 @@ A console based German article learning game.
 2. Open the files, and run the game by opening the "FeedingNemo_game.exe" file.
 
 ## About Game
-```
-Authors: Viktoria, Yuyang and Akhila
-Version: 1.8 
-Created: 2026
-Platform: Windows (uses msvcrt & winsound)
-```
+- Authors: Viktoria ([@Vicky-cu](https://github.com/Vicky-cu)), Yuyang and Akhila ([@akhila-gr](https://github.com/akhila-gr))
+- Version: 1.8
+- Created: 2026
+- Platform: Windows (uses msvcrt & winsound)
