@@ -2,7 +2,7 @@ name: Build Executables
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch: # Allows manual trigger
 
 jobs:
